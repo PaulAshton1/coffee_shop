@@ -1,18 +1,27 @@
-from customer import Customer
-from coffee import Coffee
-from order import Order
+from .customer import Customer
+from .coffee import Coffee
+from .order import Order
 
-c1 = Customer("Bob","Bob@gmail.com")
-coffee1 = Coffee("Latte", 450)
+c1 = Customer("Joe", "Joe@gmail.com")
+c2 = Customer("Jean", "Jean@gmail.com")
 
-order1 = Order(c1, coffee1)
+latte = Coffee("Latte")
+espresso = Coffee("Espresso")
 
-print(c1.name)
-print(coffee1.name)
-print(order1.price)
-print(order1.timestamp)
+c1.create_order(latte, 450)
+c1.create_order(latte, 500)
+c2.create_order(espresso, 300)
 
-print("All orders:", Order.get_all_orders())
+top = Customer.most_aficionado(latte)
 
-print("Customer's coffees:", c1.coffees())
-print("Coffee's customers:", coffee1.customers())
+print(f"{latte.name} was ordered {latte.num_orders()} times.")
+print(f"Average price of {latte.name}: ksh{latte.average_price()}")
+
+if top:
+    print(f"The top aficionado for {latte.name} is {top.name}")
+else:
+    print(f"No aficionados yet for {latte.name}")
+
+print(f"\nOrders by {c1.name}:")
+for order in c1.orders():
+    print(f"  - {order.coffee.name} at Ksh{order.price} on {order.timestamp}")

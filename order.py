@@ -1,15 +1,20 @@
 from datetime import datetime
-from customer import Customer
-from coffee import Coffee
+from .customer import Customer
+from .coffee import Coffee
+
 
 class Order:
     _all_orders = []
-    def __init__(self, customer, coffee, price=None):
+
+    def __init__(self, customer, coffee, price):
         self.customer = customer
         self.coffee = coffee
-        self.price = price if price is not None else coffee.price
+        self.price = price
         self.timestamp = datetime.now()
         Order._all_orders.append(self)
+
+    def __repr__(self):
+        return f"<Order: {self.customer.name} ordered {self.coffee.name} for Ksh{self.price}>"
 
     @classmethod
     def get_all_orders(cls):
@@ -21,10 +26,10 @@ class Order:
 
     @customer.setter
     def customer(self, value):
-        if isinstance(value, Customer):
-            self._customer = value
-        else:
-            raise TypeError("customer must be an instance of the Customer class.")
+        if not isinstance(value, Customer):
+            raise TypeError(
+                "customer must be an instance of the Customer class.")
+        self._customer = value
 
     @property
     def coffee(self):
@@ -32,10 +37,9 @@ class Order:
 
     @coffee.setter
     def coffee(self, value):
-        if isinstance(value, Coffee):
-            self._coffee = value
-        else:
+        if not isinstance(value, Coffee):
             raise TypeError("coffee must be an instance of the Coffee class.")
+        self._coffee = value
 
     @property
     def price(self):
@@ -43,21 +47,8 @@ class Order:
 
     @price.setter
     def price(self, value):
-        if isinstance(value, (int, float)) and value > 0:
-            self._price = float(value)
-        else:
+        if not isinstance(value, (int, float)):
+            raise TypeError("Price must be a number (int or float).")
+        if value <= 0:
             raise ValueError("Price must be a positive number.")
-
-
-c1 = Customer("Alice", "alice@example.com")
-coffee1 = Coffee("Latte", 4.5)
-
-order1 = Order(c1, coffee1)
-print(order1.customer.name)   # Alice
-print(order1.coffee.name)     # Latte
-print(order1.price)           # 4.5
-print(order1.timestamp)       # Current datetime
-
-print("All orders:", Order.get_all_orders())
-print("Customer's coffees:", c1.coffees())
-print("Coffee's customers:", coffee1.customers())
+        self._price = float(value)
